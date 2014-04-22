@@ -15,12 +15,12 @@ Feature: The header_names option can be configured via an initializer
     And I write to "spec/factories/users.rb" with:
       """
       FactoryGirl.define do
-        sequence :email do |n|
+        sequence :uid do |n|
           "user#{n}@factory.com"
         end
 
         factory :user do
-          email
+          uid
           password  "password"
           password_confirmation "password"
         end
@@ -37,7 +37,7 @@ Feature: The header_names option can be configured via an initializer
 
             it "performs token authentication" do
               user = FactoryGirl.create(:user \
-                                 ,email: 'alice@example.com' \
+                                 ,uid: 'alice@example.com' \
                                  ,authentication_token: 'ExaMpLeTokEn' )
 
               # `sign_in` is configured to raise an exception when called,
@@ -45,7 +45,7 @@ Feature: The header_names option can be configured via an initializer
               lambda do
                 # see https://github.com/rspec/rspec-rails/issues/65
                 # and http://guides.rubyonrails.org/testing.html#helpers-available-for-integration-tests
-                request_via_redirect 'GET', private_posts_path, nil, { 'X-User-Email' => user.email, 'X-User-Token' => user.authentication_token }
+                request_via_redirect 'GET', private_posts_path, nil, { 'X-User-uid' => user.uid, 'X-User-Token' => user.authentication_token }
               end.should raise_exception(RuntimeError, "`sign_in` was called.")
             end
           end
@@ -54,7 +54,7 @@ Feature: The header_names option can be configured via an initializer
 
             it "does not perform token authentication" do
               user = FactoryGirl.create(:user \
-                                 ,email: 'alice@example.com' \
+                                 ,uid: 'alice@example.com' \
                                  ,authentication_token: 'ExaMpLeTokEn' )
 
               # `sign_in` is configured to raise an exception when called,
@@ -62,7 +62,7 @@ Feature: The header_names option can be configured via an initializer
               lambda do
                 # see https://github.com/rspec/rspec-rails/issues/65
                 # and http://guides.rubyonrails.org/testing.html#helpers-available-for-integration-tests
-                request_via_redirect 'GET', private_posts_path, nil, { 'X-User-Email' => user.email }
+                request_via_redirect 'GET', private_posts_path, nil, { 'X-User-uid' => user.uid }
               end.should raise_exception(RuntimeError, "`authenticate_user!` was called.")
             end
           end
@@ -104,7 +104,7 @@ Feature: The header_names option can be configured via an initializer
         # Configure the name of the HTTP headers watched for authentication.
         #
         # Default header names for a given token authenticatable entity follow the pattern:
-        #   { entity: { authentication_token: 'X-Entity-Token', email: 'X-Entity-Email'} }
+        #   { entity: { authentication_token: 'X-Entity-Token', uid: 'X-Entity-uid'} }
         #
         # When several token authenticatable models are defined, custom header names
         # can be specified for none, any, or all of them.
@@ -115,11 +115,11 @@ Feature: The header_names option can be configured via an initializer
         #   When the following configuration is used:
         #     `config.header_names = { super_admin: { authentication_token: 'X-Admin-Auth-Token' } }`
         #   Then the token authentification handler for User watches the following headers:
-        #     `X-User-Token, X-User-Email`
+        #     `X-User-Token, X-User-uid`
         #   And the token authentification handler for SuperAdmin watches the following headers:
-        #     `X-Admin-Auth-Token, X-SuperAdmin-Email`
+        #     `X-Admin-Auth-Token, X-SuperAdmin-uid`
         #
-        config.header_names = { user: { authentication_token: 'X-User-Auth-Token', email: 'X-User-Email' } }
+        config.header_names = { user: { authentication_token: 'X-User-Auth-Token', uid: 'X-User-uid' } }
 
       end
       """
@@ -128,12 +128,12 @@ Feature: The header_names option can be configured via an initializer
     And I write to "spec/factories/users.rb" with:
       """
       FactoryGirl.define do
-        sequence :email do |n|
+        sequence :uid do |n|
           "user#{n}@factory.com"
         end
 
         factory :user do
-          email
+          uid
           password  "password"
           password_confirmation "password"
         end
@@ -154,7 +154,7 @@ Feature: The header_names option can be configured via an initializer
 
               it "performs token authentication" do
                 user = FactoryGirl.create(:user \
-                                   ,email: 'alice@example.com' \
+                                   ,uid: 'alice@example.com' \
                                    ,authentication_token: 'ExaMpLeTokEn' )
 
                 # `sign_in` is configured to raise an exception when called,
@@ -162,7 +162,7 @@ Feature: The header_names option can be configured via an initializer
                 lambda do
                   # see https://github.com/rspec/rspec-rails/issues/65
                   # and http://guides.rubyonrails.org/testing.html#helpers-available-for-integration-tests
-                  request_via_redirect 'GET', private_posts_path, nil, { 'X-User-Email' => user.email, 'X-User-Auth-Token' => user.authentication_token }
+                  request_via_redirect 'GET', private_posts_path, nil, { 'X-User-uid' => user.uid, 'X-User-Auth-Token' => user.authentication_token }
                 end.should raise_exception(RuntimeError, "`sign_in` was called.")
               end
             end
@@ -171,7 +171,7 @@ Feature: The header_names option can be configured via an initializer
 
                 it "does not perform token authentication" do
                   user = FactoryGirl.create(:user \
-                                     ,email: 'alice@example.com' \
+                                     ,uid: 'alice@example.com' \
                                      ,authentication_token: 'ExaMpLeTokEn' )
 
                   # `authenticate_user!` is configured to raise an exception when called,
@@ -179,7 +179,7 @@ Feature: The header_names option can be configured via an initializer
                   lambda do
                     # see https://github.com/rspec/rspec-rails/issues/65
                     # and http://guides.rubyonrails.org/testing.html#helpers-available-for-integration-tests
-                    request_via_redirect 'GET', private_posts_path, nil, { 'X-User-Email' => user.email, 'X-User-Token' => user.authentication_token }
+                    request_via_redirect 'GET', private_posts_path, nil, { 'X-User-uid' => user.uid, 'X-User-Token' => user.authentication_token }
                   end.should raise_exception(RuntimeError, "`authenticate_user!` was called.")
                 end
               end

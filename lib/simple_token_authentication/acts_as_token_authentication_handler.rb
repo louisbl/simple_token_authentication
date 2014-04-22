@@ -8,7 +8,7 @@ module SimpleTokenAuthentication
     included do
       private :authenticate_entity_from_token!
       private :header_token_name
-      private :header_email_name
+      private :header_device_id_name
       # This is our new function that comes before Devise's one
       before_filter :authenticate_entity_from_token!
       # This is Devise's authentication
@@ -33,21 +33,21 @@ module SimpleTokenAuthentication
       # Set the authentication token params if not already present,
       # see http://stackoverflow.com/questions/11017348/rails-api-authentication-by-headers-token
       params_token_name = "#{@@entity.name.singularize.underscore}_token".to_sym
-      params_email_name = "#{@@entity.name.singularize.underscore}_email".to_sym
+      params_device_id_name = "#{@@entity.name.singularize.underscore}_device_id".to_sym
       if token = params[params_token_name].blank? && request.headers[header_token_name]
         params[params_token_name] = token
       end
-      if email = params[params_email_name].blank? && request.headers[header_email_name]
-        params[params_email_name] = email
+      if device_id = params[params_device_id_name].blank? && request.headers[header_device_id_name]
+        params[params_device_id_name] = device_id
       end
 
-      email = params[params_email_name].presence
+      device_id = params[params_device_id_name].presence
       # See https://github.com/ryanb/cancan/blob/1.6.10/lib/cancan/controller_resource.rb#L108-L111
       entity = nil
       if @@entity.respond_to? "find_by"
-        entity = email && @@entity.find_by(email: email)
-      elsif @@entity.respond_to? "find_by_email"
-        entity = email && @@entity.find_by_email(email)
+        entity = device_id && @@entity.find_by(device_id: device_id)
+      elsif @@entity.respond_to? "find_by_device_id"
+        entity = device_id && @@entity.find_by_device_id(device_id)
       end
 
       # Notice how we use Devise.secure_compare to compare the token
@@ -71,12 +71,12 @@ module SimpleTokenAuthentication
       end
     end
 
-    # Private: Return the name of the header to watch for the email param
-    def header_email_name
+    # Private: Return the name of the header to watch for the device_id param
+    def header_device_id_name
       if SimpleTokenAuthentication.header_names["#{@@entity.name.singularize.underscore}".to_sym].presence
-        SimpleTokenAuthentication.header_names["#{@@entity.name.singularize.underscore}".to_sym][:email]
+        SimpleTokenAuthentication.header_names["#{@@entity.name.singularize.underscore}".to_sym][:device_id]
       else
-        "X-#{@@entity.name.singularize.camelize}-Email"
+        "X-#{@@entity.name.singularize.camelize}-DeviceId"
       end
     end
 

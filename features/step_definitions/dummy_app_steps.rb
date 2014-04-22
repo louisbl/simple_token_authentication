@@ -12,7 +12,6 @@ Given /^I have a dummy app with a Devise-enabled (\w+)$/ do |model|
     And I run `rm -r dummy`
     And a directory named "dummy"
     And I cd to "dummy"
-    And I run `rvm current`
     And I run `pwd`
     And The default aruba timeout is 30 seconds
     And I run `rails new . --skip-bundle --skip-test-unit --skip-javascript`
@@ -59,7 +58,7 @@ Given /^I have a dummy app with a Devise-enabled (\w+)$/ do |model|
 
   # See https://github.com/gonzalo-bulnes/simple_token_authentication#installation
   steps %Q{
-    And I run `rails g migration add_authentication_token_to_#{model.underscore.pluralize} authentication_token:string:index`
+    And I run `rails g migration add_authentication_token_to_#{model.underscore.pluralize} authentication_token:string:index uid:string:index`
   }
 end
 
@@ -73,7 +72,6 @@ Given /^I have a dummy app with a Devise-enabled (\w+) and (\w+)$/ do |first_mod
     And I run `rm -r dummy`
     And a directory named "dummy"
     And I cd to "dummy"
-    And I run `rvm current`
     And I run `pwd`
     And The default aruba timeout is 30 seconds
     And I run `rails new . --skip-bundle --skip-test-unit --skip-javascript`
@@ -115,8 +113,8 @@ Given /^I have a dummy app with a Devise-enabled (\w+) and (\w+)$/ do |first_mod
 
   # See https://github.com/gonzalo-bulnes/simple_token_authentication#installation
   steps %Q{
-    And I run `rails g migration add_authentication_token_to_#{first_model.underscore.pluralize} authentication_token:string:index`
-    And I run `rails g migration add_authentication_token_to_#{second_model.underscore.pluralize} authentication_token:string:index`
+    And I run `rails g migration add_authentication_token_to_#{first_model.underscore.pluralize} authentication_token:string:index uid:string:index`
+    And I run `rails g migration add_authentication_token_to_#{second_model.underscore.pluralize} authentication_token:string:index uid:string:index`
   }
 end
 
@@ -230,6 +228,9 @@ Given /^(\w+) `acts_as_token_authenticatable`$/ do |model|
                :recoverable, :rememberable, :trackable, :validatable
 
         acts_as_token_authenticatable
+        def email_required?
+          false
+        end
       end
       """
   }

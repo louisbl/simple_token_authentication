@@ -16,12 +16,12 @@ Feature: The sign_in_token option can be configured via an initializer
     And I write to "spec/factories/users.rb" with:
       """
       FactoryGirl.define do
-        sequence :email do |n|
+        sequence :uid do |n|
           "user#{n}@factory.com"
         end
 
         factory :user do
-          email
+          uid
           password  "password"
           password_confirmation "password"
         end
@@ -38,7 +38,7 @@ Feature: The sign_in_token option can be configured via an initializer
 
             let(:user) do
               FactoryGirl.create(:user \
-                                 ,email: 'alice@example.com' \
+                                 ,uid: 'alice@example.com' \
                                  ,authentication_token: 'ExaMpLeTokEn')
             end
 
@@ -46,7 +46,7 @@ Feature: The sign_in_token option can be configured via an initializer
               # `sign_in` is configured to raise an exception when called,
               # see spec/dummy/app/controllers/application_controller.rb
               lambda do
-                get private_posts_path, { user_email: user.email, user_token: user.authentication_token}
+                get private_posts_path, { user_uid: user.uid, user_token: user.authentication_token}
               end.should raise_exception(RuntimeError, "`sign_in` was called with options `{:store=>false}`.")
             end
           end
@@ -80,8 +80,8 @@ Feature: The sign_in_token option can be configured via an initializer
         # Configure the session persistence policy after a successful sign in,
         # in other words, if the authentication token acts as a signin token.
         # If true, user is stored in the session and the authentication token and
-        # email may be provided only once.
-        # If false, users must provide their authentication token and email at every request.
+        # uid may be provided only once.
+        # If false, users must provide their authentication token and uid at every request.
         # config.sign_in_token = false
         config.sign_in_token = true
       end
@@ -91,12 +91,12 @@ Feature: The sign_in_token option can be configured via an initializer
     And I write to "spec/factories/users.rb" with:
       """
       FactoryGirl.define do
-        sequence :email do |n|
+        sequence :uid do |n|
           "user#{n}@factory.com"
         end
 
         factory :user do
-          email
+          uid
           password  "password"
           password_confirmation "password"
         end
@@ -117,7 +117,7 @@ Feature: The sign_in_token option can be configured via an initializer
 
               let(:user) do
                 FactoryGirl.create(:user \
-                                   ,email: 'alice@example.com' \
+                                   ,uid: 'alice@example.com' \
                                    ,authentication_token: 'ExaMpLeTokEn' )
               end
 
@@ -125,7 +125,7 @@ Feature: The sign_in_token option can be configured via an initializer
                 # `sign_in` is configured to raise an exception when called,
                 # see spec/dummy/app/controllers/application_controller.rb
                 lambda do
-                  get private_posts_path, { user_email: user.email, user_token: user.authentication_token }
+                  get private_posts_path, { user_uid: user.uid, user_token: user.authentication_token }
                 end.should raise_exception(RuntimeError, "`sign_in` was called with options `{:store=>true}`.")
               end
             end
